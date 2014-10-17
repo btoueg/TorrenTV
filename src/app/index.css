@@ -160,6 +160,13 @@ body div{
     cursor:pointer;
 }
 
+.seekbutton {
+    margin-top: -20px;
+   content:url("./seek_forward.png");
+    margin-right:9px;
+    cursor:pointer;
+}
+
 .deviceiconOff {
     
     content:url("./AirplaySmallOff.png");

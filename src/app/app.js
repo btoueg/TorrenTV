@@ -145,7 +145,7 @@ function playInDevices(resource){
                     dev.togglePlayIcon()
                     console.log("Toggling play icon")
                 }
-
+				dev.togglePlayControls();
                 if(dev.enabled==false){
                   dev.togglePlayControls()
                 }
@@ -329,6 +329,16 @@ function togglePlay(n){
   }
 }
 
+function seekForward(n, timelapse){
+	timelapse = timelapse === undefined ? 30 : timelapse;
+	var device = self.devices[n];
+	if (device.playing) {
+		device.player.seek(timelapse, function(){
+              console.log('seek +30')
+		});
+	}
+}
+
 function toggleDevice(n){
     self.devices[n].active = !self.devices[n].active
     document.getElementById('off'+n).classList.toggle('offlabel');
@@ -351,7 +361,7 @@ function addDeviceElement(label){
 
 function addChromecastDeviceElement(label){
      document.getElementById('dropmessage').style.height = '100px';
-     var htmlDevice = ' <div  class="device" style="margin-top:22px;"> <div class="chromecontrols"> <div id="playbutton'+(ips.length-1)+'" class="controlbutton hidden" onclick="togglePlay('+(ips.length-1)+');"><img class="playbutton"/></div> <div id="stopbutton'+(ips.length-1)+'"class="controlbutton hidden" onclick="toggleStop('+(ips.length-1)+');"><img class="stopbutton"/></div> </div><img onclick="toggleChromecastDevice('+(ips.length-1)+');" id="airplay-icon'+(ips.length-1)+'" class="chromeicon"/> <p style="margin-top:-3px;">'+label+'</p> <div onclick="toggleChromecastDevice('+(ips.length-1)+');"><p id="off'+(ips.length-1)+'" class="offlabel" style="margin-top:-36px;margin-left:-8px;" >OFF</p> </div></div> </div>'
+     var htmlDevice = ' <div  class="device" style="margin-top:22px;"> <div class="chromecontrols"> <div id="playbutton'+(ips.length-1)+'" class="controlbutton hidden" onclick="togglePlay('+(ips.length-1)+');"><img class="playbutton"/></div> <div id="stopbutton'+(ips.length-1)+'"class="controlbutton hidden" onclick="toggleStop('+(ips.length-1)+');"><img class="stopbutton"/></div> <div id="seekbutton'+(ips.length-1)+'"class="controlbutton hidden" onclick="seekForward('+(ips.length-1)+');"><img class="seekbutton"/></div> </div><img onclick="toggleChromecastDevice('+(ips.length-1)+');" id="airplay-icon'+(ips.length-1)+'" class="chromeicon"/> <p style="margin-top:-3px;">'+label+'</p> <div onclick="toggleChromecastDevice('+(ips.length-1)+');"><p id="off'+(ips.length-1)+'" class="offlabel" style="margin-top:-36px;margin-left:-8px;" >OFF</p> </div></div> </div>'
 
      document.getElementById('airplay').innerHTML += htmlDevice
      setUIspace()
@@ -369,12 +379,14 @@ chromecaster.on( 'deviceOn', function( device ) {
      device.stopped      = false
      device.playerButtonHtml = document.getElementById('playbutton'+(ips.length-1)).classList
      device.stopButtonHtml = document.getElementById('stopbutton'+(ips.length-1)).classList
+	 device.seekButtonHtml = document.getElementById('seekbutton'+(ips.length-1)).classList
      device.togglePlayIcon = function(){
          device.playerButtonHtml.toggle('pausebutton');
      }
      device.togglePlayControls = function(){
          device.playerButtonHtml.toggle('hidden');
          device.stopButtonHtml.toggle('hidden');
+		 device.seekButtonHtml.toggle('hidden');
      }
      self.devices.push(device)
      emitter.emit('wantToPlay');
